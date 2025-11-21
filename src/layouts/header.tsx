@@ -41,7 +41,9 @@ export function Header() {
 				</ul>
 			</nav>
 
-			<Button>登入</Button>
+			<Button asChild>
+				<Link href="/auth/login">登入</Link>
+			</Button>
 		</header>
 	);
 }
