@@ -7,13 +7,11 @@ export default function AboutPage() {
 	return (
 		<section className="px-edge py-section space-y-16">
 			<header className="mb-32 space-y-8 text-center">
-				<p className="text-muted-foreground mb-0 text-xs leading-[1.8] tracking-widest uppercase">
+				<p className="text-muted-foreground t-body-4 mb-0 tracking-widest uppercase">
 					Webify
 				</p>
-				<h1 className="text-primary font-serif text-5xl leading-[1.5] font-bold text-shadow-md lg:text-6xl">
-					關於我們
-				</h1>
-				<p className="text-muted-foreground mx-auto max-w-xl text-xl leading-[1.4] text-pretty">
+				<h1 className="text-primary t-heading-1 text-shadow-md">關於我們</h1>
+				<p className="text-muted-foreground t-body-1 mx-auto max-w-xl text-pretty">
 					Webify 是專為網頁開發領域打造的課程平台，協助創作者安全銷售內容，
 					也讓學習者輕鬆探索、購買並持續精進。
 				</p>
@@ -30,10 +28,8 @@ export default function AboutPage() {
 				</div>
 
 				<div className="flex flex-col justify-center gap-8">
-					<h2 className="text-foreground font-serif text-4xl leading-[1.3] font-bold">
-						創作理念
-					</h2>
-					<p className="text-muted-foreground max-w-3xl text-base leading-[1.5] text-pretty">
+					<h2 className="text-foreground t-heading-2">創作理念</h2>
+					<p className="text-muted-foreground t-body-2 max-w-3xl text-pretty">
 						我們相信只要提供直覺的創作工具與彈性的商業機制，任何人都能成為創作者。
 						Webify
 						讓使用者透過升級即可解鎖創作者身份，並在一個介面中完成課程建立、
@@ -53,10 +49,8 @@ export default function AboutPage() {
 				</div>
 
 				<div className="flex flex-col justify-center gap-8">
-					<h2 className="text-foreground font-serif text-4xl leading-[1.3] font-bold">
-						承諾與願景
-					</h2>
-					<p className="text-muted-foreground max-w-3xl text-base leading-[1.5] text-pretty">
+					<h2 className="text-foreground t-heading-2">承諾與願景</h2>
+					<p className="text-muted-foreground t-body-2 max-w-3xl text-pretty">
 						我們致力於打造安全而可擴充的學習體驗：嚴謹的身份與權限控管、私有媒體簽署、
 						以及穩定的串流品質，確保課程在任何時候都能可靠地傳遞給真正需要的人。
 						長遠而言，Webify 期望成為華語世界最值得信賴的網頁開發知識基地。

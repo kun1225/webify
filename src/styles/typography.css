@@ -1,0 +1,67 @@
+@utility t-heading-1 {
+	@layer components {
+		font: var(--tw-font-weight, bold) var(--text-6xl) / 1.2
+			var(--font-noto-serif-tc);
+
+		@variant max-md {
+			font: var(--tw-font-weight, bold) var(--text-5xl) / 1.2
+				var(--font-noto-serif-tc);
+		}
+	}
+}
+
+@utility t-heading-2 {
+	@layer components {
+		font: var(--tw-font-weight, bold) var(--text-4xl) / 1.3
+			var(--font-noto-serif-tc);
+	}
+}
+
+@utility t-heading-3 {
+	@layer components {
+		font: var(--tw-font-weight, bold) var(--text-3xl) / 1.4
+			var(--font-noto-serif-tc);
+	}
+}
+
+@utility t-heading-4 {
+	@layer components {
+		font: var(--tw-font-weight, bold) var(--text-2xl) / 1.4
+			var(--font-noto-serif-tc);
+	}
+}
+
+@utility t-heading-5 {
+	@layer components {
+		font: var(--tw-font-weight, bold) var(--text-xl) / 1.4
+			var(--font-noto-serif-tc);
+	}
+}
+
+@utility t-body-1 {
+	@layer components {
+		font: var(--tw-font-weight, normal) var(--text-xl) / 1.5
+			var(--font-noto-sans-tc);
+	}
+}
+
+@utility t-body-2 {
+	@layer components {
+		font: var(--tw-font-weight, normal) var(--text-base) / 1.5
+			var(--font-noto-sans-tc);
+	}
+}
+
+@utility t-body-3 {
+	@layer components {
+		font: var(--tw-font-weight, normal) var(--text-sm) / 1.6
+			var(--font-noto-sans-tc);
+	}
+}
+
+@utility t-body-4 {
+	@layer components {
+		font: var(--tw-font-weight, normal) var(--text-xs) / 1.8
+			var(--font-noto-sans-tc);
+	}
+}
