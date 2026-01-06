@@ -1,0 +1,8 @@
+-- 20260104085247_create_users_table
+
+CREATE TABLE users (
+	id UUID PRIMARY KEY,
+	full_name TEXT NOT NULL,
+	created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+	updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
