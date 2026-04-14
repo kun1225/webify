@@ -17,10 +17,6 @@
 /.next/
 /out/
 
-# Supabase
-supabase/.temp/
-supabase/.branches
-
 # production
 /build
 

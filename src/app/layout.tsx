@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_TC, Noto_Serif_TC } from 'next/font/google';
+import { Toaster } from '@/components/ui/sonner';
 
-import '../styles/globals.css';
+import '@/styles/globals.css';
 
 const notoSansTC = Noto_Sans_TC({
 	variable: '--font-noto-sans-tc',
@@ -28,6 +29,7 @@ export default function RootLayout({
 				className={`${notoSansTC.variable} ${notoSerifTC.variable} antialiased`}
 			>
 				{children}
+				<Toaster />
 			</body>
 		</html>
 	);
