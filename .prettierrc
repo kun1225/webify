@@ -6,6 +6,8 @@
 	"singleQuote": true,
 	"bracketSpacing": true,
 	"endOfLine": "lf",
-	"plugins": ["prettier-plugin-tailwindcss"],
-	"tailwindFunctions": ["cva"]
+	"plugins": ["prettier-plugin-tailwindcss", "prettier-plugin-sql"],
+	"tailwindFunctions": ["cva"],
+	"language": "postgresql",
+	"keywordCase": "upper"
 }
