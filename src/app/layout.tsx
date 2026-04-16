@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_TC, Noto_Serif_TC } from 'next/font/google';
+
 import { Toaster } from '@/components/ui/sonner';
 
 import '@/styles/globals.css';
