@@ -1,7 +1,6 @@
-export type UserRole = 'learner' | 'creator' | 'admin';
+import type { Tables } from './database';
+import type { CamelCasedProperties } from 'type-fest';
 
-export type CurrentUserProfile = {
-	id: string;
-	full_name: string;
-	role: UserRole;
-};
+export type UserProfileDB = Pick<Tables<'users'>, 'id' | 'full_name' | 'role'>;
+
+export type UserProfile = CamelCasedProperties<UserProfileDB>;

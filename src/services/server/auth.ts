@@ -1,5 +1,6 @@
 'use server';
 
+import camelcaseKeys from 'camelcase-keys';
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
@@ -11,7 +12,7 @@ import type {
 	AuthTokenResponsePassword,
 } from '@supabase/supabase-js';
 
-import type { CurrentUserProfile } from '@/types';
+import type { UserProfile, UserProfileDB } from '@/types';
 
 export async function login(
 	data: LoginFormData,
@@ -90,9 +91,7 @@ export async function signOut(): Promise<void> {
 	redirect('/');
 }
 
-export async function getCurrentUserProfile(): Promise<
-	Result<CurrentUserProfile>
-> {
+export async function getCurrentUserProfile(): Promise<Result<UserProfile>> {
 	const supabase = await createSupabaseServerClient();
 
 	const {
@@ -112,7 +111,7 @@ export async function getCurrentUserProfile(): Promise<
 		.from('users')
 		.select('id, full_name, role')
 		.eq('id', user.id)
-		.single<CurrentUserProfile>();
+		.single<UserProfileDB>();
 
 	if (profileError) {
 		return {
@@ -124,6 +123,6 @@ export async function getCurrentUserProfile(): Promise<
 
 	return {
 		ok: true,
-		data: profile,
+		data: camelcaseKeys(profile),
 	};
 }
