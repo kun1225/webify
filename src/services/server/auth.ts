@@ -11,6 +11,8 @@ import type {
 	AuthTokenResponsePassword,
 } from '@supabase/supabase-js';
 
+import type { CurrentUserProfile } from '@/types';
+
 export async function login(
 	data: LoginFormData,
 ): Promise<Result<AuthTokenResponsePassword['data']>> {
@@ -86,4 +88,42 @@ export async function signOut(): Promise<void> {
 	const supabase = await createSupabaseServerClient();
 	await supabase.auth.signOut();
 	redirect('/');
+}
+
+export async function getCurrentUserProfile(): Promise<
+	Result<CurrentUserProfile>
+> {
+	const supabase = await createSupabaseServerClient();
+
+	const {
+		data: { user },
+		error: userError,
+	} = await supabase.auth.getUser();
+
+	if (userError || !user) {
+		return {
+			ok: false,
+			code: AppError.UNAUTHENTICATED,
+			message: '請先登入',
+		};
+	}
+
+	const { data: profile, error: profileError } = await supabase
+		.from('users')
+		.select('id, full_name, role')
+		.eq('id', user.id)
+		.single<CurrentUserProfile>();
+
+	if (profileError) {
+		return {
+			ok: false,
+			code: AppError.INTERNAL,
+			message: '無法取得使用者資料',
+		};
+	}
+
+	return {
+		ok: true,
+		data: profile,
+	};
 }
