@@ -16,5 +16,10 @@ export const signUpSchema = z
 		path: ['confirmPassword'],
 	});
 
+export const profileSchema = z.object({
+	fullName: z.string().min(1, '請輸入姓名').max(100, '姓名不能超過 100 個字元'),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignUpFormData = z.infer<typeof signUpSchema>;
+export type ProfileFormData = z.infer<typeof profileSchema>;

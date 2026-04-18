@@ -2,7 +2,7 @@
 
 import camelcaseKeys from 'camelcase-keys';
 import { redirect } from 'next/navigation';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/supabase/server';
 
 import { LoginFormData, SignUpFormData } from '@/services/shared/validations';
 
@@ -50,13 +50,30 @@ export async function signup(
 	const { email, password } = data;
 
 	const supabase = await createSupabaseServerClient();
+	const adminClient = await createSupabaseAdminClient();
+
+	const baseUserName = email.split('@')[0];
+
+	const { data: existingUsers } = await adminClient
+		.from('users')
+		.select('full_name')
+		.or(`full_name.eq.${baseUserName},full_name.like.${baseUserName}-%`);
+
+	let count = 1;
+	let signupUserName = email.split('@')[0];
+	const existingUsersName = existingUsers?.map((user) => user.full_name) ?? [];
+
+	while (existingUsersName.includes(signupUserName)) {
+		signupUserName = `${baseUserName}-${count}`;
+		count++;
+	}
 
 	const { data: authData, error } = await supabase.auth.signUp({
 		email,
 		password,
 		options: {
 			data: {
-				full_name: email.split('@')[0],
+				full_name: signupUserName,
 			},
 		},
 	});

@@ -8,16 +8,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { login, signup } from '@/services/server/auth';
 
-import { LoaderCircle } from 'lucide-react';
-
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import {
 	Field,
 	FieldLabel,
 	FieldError,
 	FieldGroup,
 } from '@/components/ui/field';
+import { FormButton } from '@/components/form-button';
 import {
 	loginSchema,
 	signUpSchema,
@@ -173,16 +171,11 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
 						)}
 					</FieldGroup>
 
-					<Button type="submit" disabled={isSubmitting} className="w-full">
-						{isSubmitting ? (
-							<>
-								<LoaderCircle className="animate-spin" />
-								<span>{currentTexts.buttonText}中...</span>
-							</>
-						) : (
-							<>{currentTexts.buttonText}</>
-						)}
-					</Button>
+					<FormButton
+						isLoading={isSubmitting}
+						label={currentTexts.buttonText}
+						className="w-full"
+					/>
 
 					<div className="text-center">
 						<p className="text-muted-foreground text-sm">
