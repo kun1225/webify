@@ -2,7 +2,10 @@
 
 import camelcaseKeys from 'camelcase-keys';
 import { redirect } from 'next/navigation';
-import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/supabase/server';
+import {
+	createSupabaseAdminClient,
+	createSupabaseServerClient,
+} from '@/lib/supabase/server';
 
 import { LoginFormData, SignUpFormData } from '@/services/shared/validations';
 
@@ -126,9 +129,13 @@ export async function getCurrentUserProfile(): Promise<Result<UserProfile>> {
 
 	const { data: profile, error: profileError } = await supabase
 		.from('users')
-		.select('id, full_name, role')
+		.select('id, full_name, role, avatar_url, updated_at')
 		.eq('id', user.id)
-		.single<UserProfileDB>();
+		.single<
+			UserProfileDB & {
+				updated_at: string | null;
+			}
+		>();
 
 	if (profileError) {
 		return {
@@ -138,8 +145,24 @@ export async function getCurrentUserProfile(): Promise<Result<UserProfile>> {
 		};
 	}
 
+	let avatarUrl: string | null = null;
+
+	if (profile?.avatar_url) {
+		const { data } = supabase.storage
+			.from('avatars')
+			.getPublicUrl(profile.avatar_url);
+
+		const bust = profile.updated_at
+			? `?t=${encodeURIComponent(profile.updated_at)}`
+			: '';
+		avatarUrl = `${data.publicUrl}${bust}`;
+	}
+
 	return {
 		ok: true,
-		data: camelcaseKeys(profile),
+		data: camelcaseKeys({
+			...profile,
+			avatar_url: avatarUrl,
+		}),
 	};
 }

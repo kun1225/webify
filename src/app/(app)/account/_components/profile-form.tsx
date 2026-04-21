@@ -21,6 +21,8 @@ import {
 import { FormButton } from '@/components/form-button';
 import { toast } from 'sonner';
 
+import { ProfileFormAvatarUploader } from './profile-form-avatar-uploader';
+
 import type { UserProfile } from '@/types';
 
 export function ProfileForm({ user }: { user: UserProfile }) {
@@ -54,6 +56,14 @@ export function ProfileForm({ user }: { user: UserProfile }) {
 				<CardTitle>個人資料</CardTitle>
 			</CardHeader>
 			<CardContent>
+				<div className="mb-6">
+					<p className="t-body-3 mb-2 font-medium">頭像</p>
+					<ProfileFormAvatarUploader
+						currentAvatarUrl={user?.avatarUrl || ''}
+						disabled={form.formState.isSubmitting}
+					/>
+				</div>
+
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 					<FieldGroup>
 						<Field data-invalid={!!errors.fullName}>
