@@ -72,6 +72,7 @@ export function ProfileForm({ user }: { user: UserProfile }) {
 								id="full_name"
 								placeholder="請輸入您的姓名"
 								aria-invalid={!!errors.fullName}
+								defaultValue={user.fullName || ''}
 								{...register('fullName')}
 							/>
 							<FieldError errors={[errors.fullName]} />
