@@ -1,3 +1,21 @@
+import type { Tables } from './database';
+import type { CamelCasedProperties } from 'type-fest';
+
+export type CourseForStudioDB = Pick<
+	Tables<'courses'>,
+	| 'id'
+	| 'title'
+	| 'slug'
+	| 'price'
+	| 'purchases'
+	| 'cover_image_url'
+	| 'is_hidden'
+	| 'updated_at'
+	| 'created_at'
+>;
+
+export type CourseForStudio = CamelCasedProperties<CourseForStudioDB>;
+
 export type CourseForCourses = {
 	id: string;
 	title: string;
