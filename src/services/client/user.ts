@@ -1,7 +1,8 @@
 'use client';
 
-import { createSupabaseBrowserClient } from '@/lib/supabase/browser';
 import { AppError, type Result } from '@/types';
+import { requireBrowserUser } from './auth';
+import { getFileExtension, validateUploadFile } from './upload';
 
 const AVATAR_BUCKET = 'avatars';
 const MAX_AVATAR_FILE_SIZE = 5 * 1024 * 1024;
@@ -15,8 +16,11 @@ const AVATAR_MIME_TO_EXTENSION: Record<string, string> = {
 export async function uploadAvatar(
 	file: File,
 ): Promise<Result<{ path: string }>> {
-	const supabase = createSupabaseBrowserClient();
-	const fileValidationError = validateAvatarFile(file);
+	const fileValidationError = validateUploadFile(file, {
+		maxFileSize: MAX_AVATAR_FILE_SIZE,
+		maxFileSizeLabel: '5MB',
+		mimeToExtension: AVATAR_MIME_TO_EXTENSION,
+	});
 
 	if (fileValidationError) {
 		return {
@@ -26,18 +30,11 @@ export async function uploadAvatar(
 		};
 	}
 
-	const {
-		data: { user },
-		error: authError,
-	} = await supabase.auth.getUser();
+	const userResult = await requireBrowserUser();
 
-	if (authError || !user) {
-		return {
-			ok: false,
-			code: AppError.UNAUTHENTICATED,
-			message: authError?.message || '用戶未登入',
-		};
-	}
+	if (!userResult.ok) return userResult;
+
+	const { supabase, user } = userResult.data;
 
 	const avatarPath = getAvatarPath(user.id, file);
 
@@ -110,20 +107,11 @@ export async function uploadAvatar(
 }
 
 export async function deleteUserAvatar(): Promise<Result<null>> {
-	const supabase = createSupabaseBrowserClient();
+	const userResult = await requireBrowserUser();
 
-	const {
-		data: { user },
-		error: authError,
-	} = await supabase.auth.getUser();
+	if (!userResult.ok) return userResult;
 
-	if (authError || !user) {
-		return {
-			ok: false,
-			code: AppError.UNAUTHENTICATED,
-			message: authError?.message || 'Not logged in',
-		};
-	}
+	const { supabase, user } = userResult.data;
 
 	const { data: currentProfile, error: profileError } = await supabase
 		.from('users')
@@ -177,27 +165,11 @@ export async function deleteUserAvatar(): Promise<Result<null>> {
 }
 
 function getAvatarPath(userId: string, file: File) {
-	const extension = AVATAR_MIME_TO_EXTENSION[file.type];
+	const extension = getFileExtension(file, AVATAR_MIME_TO_EXTENSION);
 
 	if (!extension) {
 		return null;
 	}
 
 	return `${userId}/avatar.${extension}`;
-}
-
-function validateAvatarFile(file: File) {
-	if (!file) {
-		return '缺少檔案';
-	}
-
-	if (!(file.type in AVATAR_MIME_TO_EXTENSION)) {
-		return '僅支援 PNG、JPEG、WebP 格式';
-	}
-
-	if (file.size > MAX_AVATAR_FILE_SIZE) {
-		return '檔案大小不可超過 5MB';
-	}
-
-	return null;
 }

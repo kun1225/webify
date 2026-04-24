@@ -1,7 +1,13 @@
 'use server';
 
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { AppError, type Result, type CourseForStudio } from '@/types';
+import {
+	AppError,
+	type Result,
+	type CourseForStudio,
+	InsertCourseDB,
+} from '@/types';
+import { type UpsertCourseFormData } from '../shared/validations';
 import camelcaseKeys from 'camelcase-keys';
 
 export async function getCreatorCourses(): Promise<
@@ -47,5 +53,58 @@ export async function getCreatorCourses(): Promise<
 		data: {
 			courses: dtoCourses || [],
 		},
+	};
+}
+
+export async function upsertCourse(
+	data: UpsertCourseFormData,
+	courseId?: string,
+): Promise<Result<Partial<InsertCourseDB>>> {
+	const supabase = await createSupabaseServerClient();
+
+	const {
+		data: { user },
+		error: userError,
+	} = await supabase.auth.getUser();
+
+	if (userError || !user) {
+		return {
+			ok: false,
+			code: AppError.UNAUTHENTICATED,
+			message: '請先登入',
+		};
+	}
+
+	const upsertPayload = {
+		id: courseId,
+		creator_id: user.id,
+		title: data.title,
+		slug: data.slug,
+		description: data.description,
+		cover_image_url: data?.coverImageUrl,
+		price: data?.price ?? 0,
+		duration: data?.duration ?? 0,
+		is_hidden: data?.isHidden ?? false,
+	};
+
+	const { data: newCourse, error } = await supabase
+		.from('courses')
+		.upsert(upsertPayload, {
+			onConflict: 'id',
+		})
+		.select()
+		.single();
+
+	if (error) {
+		return {
+			ok: false,
+			code: AppError.INTERNAL,
+			message: error.message || '儲存課程失敗',
+		};
+	}
+
+	return {
+		ok: true,
+		data: newCourse,
 	};
 }

@@ -1,20 +1,34 @@
-import type { Tables } from './database';
+import type { Tables, TablesInsert, TablesUpdate } from './database';
 import type { CamelCasedProperties } from 'type-fest';
 
-export type CourseForStudioDB = Pick<
-	Tables<'courses'>,
+export type Course = CamelCasedProperties<Tables<'courses'>>;
+export type InsertCourseDB = TablesInsert<'courses'>;
+export type UpdateCourseDB = TablesUpdate<'courses'>;
+
+export type CourseForStudio = Pick<
+	Course,
 	| 'id'
 	| 'title'
 	| 'slug'
 	| 'price'
 	| 'purchases'
-	| 'cover_image_url'
-	| 'is_hidden'
-	| 'updated_at'
-	| 'created_at'
+	| 'coverImageUrl'
+	| 'isHidden'
+	| 'updatedAt'
+	| 'createdAt'
 >;
 
-export type CourseForStudio = CamelCasedProperties<CourseForStudioDB>;
+export type CourseForEdit = Pick<
+	Course,
+	| 'id'
+	| 'title'
+	| 'slug'
+	| 'description'
+	| 'coverImageUrl'
+	| 'price'
+	| 'duration'
+	| 'isHidden'
+>;
 
 export type CourseForCourses = {
 	id: string;

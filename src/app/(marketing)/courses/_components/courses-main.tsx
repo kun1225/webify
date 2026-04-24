@@ -8,7 +8,7 @@ import { CoursesPagination } from './courses-pagination';
 import { CoursesSidebar } from './courses-sidebar';
 import { CoursesSort } from './courses-sort';
 
-import type { CoursesWithPagination } from '@/types/courses';
+import type { CoursesWithPagination } from '@/types/course';
 
 async function getCoursesWithFilters(): Promise<CoursesWithPagination> {
 	// 模擬 API 延遲
