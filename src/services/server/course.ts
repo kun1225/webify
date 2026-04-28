@@ -5,7 +5,8 @@ import {
 	AppError,
 	type Result,
 	type CourseForStudio,
-	InsertCourseDB,
+	type InsertCourseDB,
+	type CourseForEdit,
 } from '@/types';
 import { type UpsertCourseFormData } from '../shared/validations';
 import camelcaseKeys from 'camelcase-keys';
@@ -106,5 +107,70 @@ export async function upsertCourse(
 	return {
 		ok: true,
 		data: newCourse,
+	};
+}
+
+export async function getCourseById(
+	id: string,
+): Promise<Result<CourseForEdit>> {
+	const supabase = await createSupabaseServerClient();
+
+	const { data, error } = await supabase
+		.from('courses')
+		.select(
+			'id, title, slug, description, cover_image_url, price, duration, is_hidden',
+		)
+		.eq('id', id)
+		.single();
+
+	if (error) {
+		return {
+			ok: false,
+			code: AppError.FORBIDDEN,
+			message: '',
+		};
+	}
+
+	return {
+		ok: true,
+		data: camelcaseKeys(data),
+	};
+}
+
+export async function deleteCourse(id: string): Promise<Result<null>> {
+	const supabase = await createSupabaseServerClient();
+
+	const {
+		data: { user },
+		error: userError,
+	} = await supabase.auth.getUser();
+
+	if (userError || !user) {
+		return {
+			ok: false,
+			code: AppError.UNAUTHENTICATED,
+			message: '請先登入',
+		};
+	}
+
+	const { error } = await supabase
+		.from('courses')
+		.delete()
+		.eq('id', id)
+		.eq('creator_id', user.id)
+		.select('id')
+		.single();
+
+	if (error) {
+		return {
+			ok: false,
+			code: AppError.FORBIDDEN,
+			message: '',
+		};
+	}
+
+	return {
+		ok: true,
+		data: null,
 	};
 }

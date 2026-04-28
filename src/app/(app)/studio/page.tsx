@@ -15,7 +15,7 @@ export default async function StudioPage() {
 
 	if (!profileResult.ok) {
 		if (profileResult.code === AppError.UNAUTHENTICATED) {
-			redirect(`/auth/login?next=${encodeURIComponent('/studio')}`);
+			redirect('/auth/login');
 		}
 
 		throw new Error(profileResult.message);

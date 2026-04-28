@@ -73,7 +73,7 @@ export function CourseForm({
 
 		toast.promise(
 			async () => {
-				const res = await upsertCourse(data);
+				const res = await upsertCourse(data, initData?.id);
 
 				if (!res.ok) {
 					throw new Error(res.message);
