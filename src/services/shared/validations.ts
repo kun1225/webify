@@ -47,7 +47,31 @@ export const upsertCourseFormSchema = z.object({
 	isHidden: z.boolean(),
 });
 
+export const upsertLessonTitleFormSchema = z.object({
+	title: z
+		.string({
+			error: () => '請輸入單元名稱',
+		})
+		.min(1, '請輸入單元名稱')
+		.max(100, '名稱不能超過100個字元'),
+});
+
+export const updateLessonFormSchema = z.object({
+	title: z
+		.string({
+			error: () => '請輸入單元名稱',
+		})
+		.min(1, '請輸入單元名稱')
+		.max(50, '名稱不能超過50個字元'),
+	videoUrl: z.string().optional(),
+	content: z.any(),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignUpFormData = z.infer<typeof signUpSchema>;
 export type ProfileFormData = z.infer<typeof profileSchema>;
 export type UpsertCourseFormData = z.infer<typeof upsertCourseFormSchema>;
+export type UpsertLessonTitleFormData = z.infer<
+	typeof upsertLessonTitleFormSchema
+>;
+export type UpdateLessonFormData = z.infer<typeof updateLessonFormSchema>;

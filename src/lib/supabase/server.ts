@@ -4,6 +4,8 @@ import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 
+import type { Database } from '@/types/database';
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
 const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
@@ -15,7 +17,7 @@ if (!supabaseUrl || !supabaseKey) {
 export async function createSupabaseServerClient() {
 	const cookieStore = await cookies();
 
-	return createServerClient(supabaseUrl, supabaseKey, {
+	return createServerClient<Database>(supabaseUrl, supabaseKey, {
 		cookies: {
 			getAll() {
 				return cookieStore.getAll();
@@ -41,7 +43,7 @@ export async function createSupabaseAdminClient() {
 		throw new Error('supabase-server.ts: Missing SUPABASE_SECRET_KEY');
 	}
 
-	return createClient(supabaseUrl!, supabaseSecretKey!, {
+	return createClient<Database>(supabaseUrl!, supabaseSecretKey!, {
 		auth: { persistSession: false },
 	});
 }

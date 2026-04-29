@@ -87,6 +87,73 @@ export type Database = {
           },
         ]
       }
+      lesson_contents: {
+        Row: {
+          content: Json | null
+          created_at: string
+          lesson_id: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          lesson_id: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          lesson_id?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_contents_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: true
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          order_index: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           avatar_url: string | null
@@ -119,7 +186,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      reorder_lessons: {
+        Args: { p_course_id: string; p_lesson_ids: string[] }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
