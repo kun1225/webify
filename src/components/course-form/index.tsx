@@ -71,9 +71,15 @@ export function CourseForm({
 	const onSubmit = async (data: UpsertCourseFormData) => {
 		setIsSubmitting(true);
 
+		const isEditingExistingCourse = hasValueObject(initData);
+
 		toast.promise(
 			async () => {
-				const res = await upsertCourse(data, initData?.id);
+				const payload = {
+					...data,
+					description: JSON.stringify(data.description),
+				};
+				const res = await upsertCourse(payload, initData?.id);
 
 				if (!res.ok) {
 					throw new Error(res.message);
@@ -124,9 +130,12 @@ export function CourseForm({
 							)}
 						/>
 
-						<CourseDescription
-							field={form.register('description')}
-							error={form.formState.errors.description}
+						<Controller
+							control={form.control}
+							name="description"
+							render={({ field, fieldState }) => (
+								<CourseDescription field={field} error={fieldState.error} />
+							)}
 						/>
 
 						<div className="grid gap-6 @md/main:grid-cols-2">

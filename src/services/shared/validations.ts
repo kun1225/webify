@@ -38,7 +38,7 @@ export const upsertCourseFormSchema = z.object({
 			error: () => '請上傳課程封面',
 		})
 		.min(1, '請上傳課程封面'),
-	description: z.string(),
+	description: z.any(),
 	price: z.number().min(0, '價格不能為負數').max(999999, '價格不能超過99999'),
 	duration: z
 		.number()

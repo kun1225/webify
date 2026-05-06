@@ -1,42 +1,48 @@
+'use client';
+
+import { useState } from 'react';
+
 import {
 	Field,
 	FieldDescription,
 	FieldError,
 	FieldLabel,
 } from '@/components/ui/field';
+import { RichTextEditor } from '@/components/rich-text-editor';
 import { cn } from '@/lib/utils';
 
 import type {
+	ControllerRenderProps,
 	FieldError as RhfFieldError,
-	UseFormRegisterReturn,
 } from 'react-hook-form';
-import { useFormContext as useRhfFormContext } from 'react-hook-form';
 import type { UpsertCourseFormData } from '@/services/shared/validations';
+import type { EditorEvents } from '@tiptap/react';
 
 export function CourseDescription({
 	field,
 	error,
 }: {
-	field: UseFormRegisterReturn<'description'>;
+	field: ControllerRenderProps<UpsertCourseFormData, 'description'>;
 	error?: RhfFieldError;
 }) {
-	const { watch } = useRhfFormContext<UpsertCourseFormData>();
-	const wordCount = String(watch('description') ?? '').trim().length;
+	const [wordCount, setWordCount] = useState(0);
+
+	const onRichTextChange = (props: EditorEvents['update']) => {
+		const editor = props.editor;
+		field.onChange(editor.getJSON());
+		setWordCount(editor.getText().length ?? 0);
+	};
 
 	return (
 		<Field data-invalid={!!error}>
-			<FieldLabel htmlFor="description">課程描述</FieldLabel>
-			<textarea
-				id="description"
-				className={cn(
-					'border-input bg-background placeholder:text-muted-foreground min-h-40 w-full rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
-					'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
-					'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
-				)}
-				aria-invalid={!!error}
+			<FieldLabel htmlFor={field.name}>課程描述</FieldLabel>
+			<RichTextEditor
+				value={field.value}
+				onChange={onRichTextChange}
+				ariaInvalid={!!error}
 				placeholder="請詳細描述您的課程內容、學習目標和適合的學員群體..."
-				{...field}
 			/>
+
 			<div className="text-muted-foreground t-body-3 flex justify-between">
 				<FieldDescription>建議至少 10 個字，最多 2000 個字</FieldDescription>
 				<span
@@ -49,7 +55,7 @@ export function CourseDescription({
 					{wordCount}/2000
 				</span>
 			</div>
-			<FieldError errors={[error]} />
+			{error && <FieldError errors={[error]} />}
 		</Field>
 	);
 }

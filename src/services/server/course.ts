@@ -81,7 +81,7 @@ export async function upsertCourse(
 		creator_id: user.id,
 		title: data.title,
 		slug: data.slug,
-		description: data.description,
+		description: JSON.parse(data.description),
 		cover_image_url: data?.coverImageUrl,
 		price: data?.price ?? 0,
 		duration: data?.duration ?? 0,
