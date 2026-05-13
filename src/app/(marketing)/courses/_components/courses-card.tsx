@@ -16,7 +16,7 @@ export function CoursesCard({
 }) {
 	const { slug, title, coverImageUrl, creator, price, duration } = data || {};
 
-	const courseUrl = `courses/${creator}/${slug}`;
+	const courseUrl = `/courses/${creator}/${slug}`;
 
 	const priceLabel =
 		price === 0

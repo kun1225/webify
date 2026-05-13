@@ -1,6 +1,9 @@
 import { Fragment } from 'react';
+import { BookOpen } from 'lucide-react';
 
+import { EmptyCard } from '@/components/empty-card';
 import { Separator } from '@/components/ui/separator';
+import { getCoursesWithFilters } from '@/services/server/courses';
 
 import { CoursesCard } from './courses-card';
 import { CoursesFilter } from './courses-filter';
@@ -8,36 +11,22 @@ import { CoursesPagination } from './courses-pagination';
 import { CoursesSidebar } from './courses-sidebar';
 import { CoursesSort } from './courses-sort';
 
-import type { CoursesWithPagination } from '@/types/course';
-
-async function getCoursesWithFilters(): Promise<CoursesWithPagination> {
-	// 模擬 API 延遲
-	await new Promise((resolve) => setTimeout(resolve, 300));
-
-	return {
-		courses: [
-			{
-				id: '1',
-				title: 'Course 1',
-				slug: 'course-1',
-				coverImageUrl: '',
-				price: 0,
-				creator: 'ThisWeb',
-				duration: 0,
-			},
-		],
-		pagination: {
-			total: 1,
-			totalPages: 1,
-		},
-		hasMore: false,
-	};
-}
-
 export async function CoursesMain() {
-	const data = await getCoursesWithFilters();
+	const result = await getCoursesWithFilters();
 
-	// Get totalPages from data if available, otherwise default to 0
+	if (!result.ok) {
+		return (
+			<EmptyCard
+				title="課程載入失敗"
+				description={result.message}
+				iconComponent={<BookOpen />}
+				actionComponent={null}
+				className="border-none bg-transparent py-26"
+			/>
+		);
+	}
+
+	const data = result.data;
 	const totalPages = data?.pagination?.totalPages ?? 0;
 	const totalCourses = data?.pagination?.total ?? 0;
 
@@ -58,14 +47,24 @@ export async function CoursesMain() {
 					</div>
 				</div>
 
-				<div className="grid grid-cols-1 gap-1 lg:grid-cols-3 lg:gap-8">
-					{data.courses.map((course) => (
-						<Fragment key={course.id}>
-							<CoursesCard data={course} />
-							<Separator className="lg:hidden" />
-						</Fragment>
-					))}
-				</div>
+				{data.courses.length > 0 ? (
+					<div className="grid grid-cols-1 gap-1 lg:grid-cols-3 lg:gap-8">
+						{data.courses.map((course) => (
+							<Fragment key={course.id}>
+								<CoursesCard data={course} />
+								<Separator className="lg:hidden" />
+							</Fragment>
+						))}
+					</div>
+				) : (
+					<EmptyCard
+						title="找不到符合條件的課程"
+						description="試試調整篩選條件或排序方式"
+						iconComponent={<BookOpen />}
+						actionComponent={null}
+						className="border-none bg-transparent py-26"
+					/>
+				)}
 
 				<CoursesPagination totalPages={totalPages} />
 			</div>

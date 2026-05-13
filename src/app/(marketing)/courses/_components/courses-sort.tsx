@@ -29,7 +29,7 @@ export function CoursesSort() {
 			</label>
 
 			<Select value={currentSortOption} onValueChange={handleSortChange}>
-				<SelectTrigger id="sort-filter" className="w-[156px]">
+				<SelectTrigger id="sort-filter" className="w-39">
 					<SelectValue />
 				</SelectTrigger>
 

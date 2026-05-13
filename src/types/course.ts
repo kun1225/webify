@@ -40,6 +40,11 @@ export type CourseForCourses = {
 	duration: number;
 };
 
+export type CourseForCourses = Pick<
+	Course,
+	'id' | 'title' | 'slug' | 'coverImageUrl' | 'price' | 'creatorId' | 'duration'
+> & { creator: string };
+
 export type CoursesFilters = {
 	page: number;
 	limit: number;

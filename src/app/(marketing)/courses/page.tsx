@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+import { CoursesLoading } from './_components/courses-loading';
 import { CoursesMain } from './_components/courses-main';
 
 export default function Page() {
@@ -10,7 +12,9 @@ export default function Page() {
 				</p>
 			</header>
 
-			<CoursesMain />
+			<Suspense fallback={<CoursesLoading />}>
+				<CoursesMain />
+			</Suspense>
 		</section>
 	);
 }

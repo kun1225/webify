@@ -1,5 +1,6 @@
 'use server';
 
+import camelcaseKeys from 'camelcase-keys';
 import {
 	createSupabaseAdminClient,
 	createSupabaseServerClient,
@@ -76,7 +77,7 @@ export async function updateUserProfile(
 
 	return {
 		ok: true,
-		data: updatedProfile,
+		data: camelcaseKeys(updatedProfile),
 	};
 }
 

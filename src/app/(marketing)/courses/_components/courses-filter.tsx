@@ -33,7 +33,7 @@ export function CoursesFilter({ className }: { className?: string }) {
 				value={currentPriceFilter}
 				onValueChange={handlePriceFilterChange}
 			>
-				<SelectTrigger id="price-filter" size="default" className="w-[120px]">
+				<SelectTrigger id="price-filter" size="default" className="w-30">
 					<SelectValue />
 				</SelectTrigger>
 

@@ -61,3 +61,27 @@ export const sortOptions: {
 		filters: { sortBy: 'price', sortOrder: 'desc' },
 	},
 ];
+
+export function getCurrentPriceFilter(
+	filters: CoursesFilters,
+): CoursesPriceFilterOption {
+	const matchedOption = priceFilterOptions.find(
+		(option) =>
+			option.filters.priceMin === filters.priceMin &&
+			option.filters.priceMax === filters.priceMax,
+	);
+
+	return matchedOption?.value ?? 'all';
+}
+
+export function getCurrentSortOption(
+	filters: CoursesFilters,
+): CoursesSortOption {
+	const matchedOption = sortOptions.find(
+		(option) =>
+			option.filters.sortBy === filters.sortBy &&
+			option.filters.sortOrder === filters.sortOrder,
+	);
+
+	return matchedOption?.value ?? 'popular';
+}
