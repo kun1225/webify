@@ -1,5 +1,6 @@
 import type { Tables, TablesInsert, TablesUpdate } from './database';
 import type { CamelCasedProperties } from 'type-fest';
+import type { LessonForCourseDetail } from './lesson';
 
 export type Course = CamelCasedProperties<Tables<'courses'>>;
 export type InsertCourseDB = TablesInsert<'courses'>;
@@ -30,14 +31,22 @@ export type CourseForEdit = Pick<
 	| 'isHidden'
 >;
 
-export type CourseForCourses = {
-	id: string;
-	title: string;
-	slug: string;
-	coverImageUrl: string;
-	price: number;
+export type CourseForCourseDetail = Pick<
+	Course,
+	| 'id'
+	| 'title'
+	| 'slug'
+	| 'description'
+	| 'coverImageUrl'
+	| 'price'
+	| 'duration'
+	| 'purchases'
+	| 'updatedAt'
+	| 'isHidden'
+> & {
 	creator: string;
-	duration: number;
+	lessons: LessonForCourseDetail[];
+	isPurchased: boolean;
 };
 
 export type CourseForCourses = Pick<
