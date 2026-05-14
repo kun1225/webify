@@ -215,7 +215,7 @@ export async function updateLesson(
 			.upsert(
 				{
 					lesson_id: lessonId,
-					video_url: data.videoUrl,
+					video_url: data.videoUrl || null,
 					content: JSON.parse(data.content),
 				},
 				{
