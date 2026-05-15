@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 import Dropzone, { type FileRejection } from 'react-dropzone';
 
 import { cn } from '@/lib/utils';
+import { uploadLessonVideo } from '@/services/client/lesson';
+import { removeLessonVideo } from '@/services/server/lesson';
 import { Button } from '@/components/ui/button';
 import {
 	Field,
@@ -14,6 +17,7 @@ import {
 
 import { Upload, VideoIcon, X } from 'lucide-react';
 
+import { useEditCourseId } from '../../_components/edit-course-id-provider';
 import type {
 	ControllerRenderProps,
 	FieldError as RhfFieldError,
@@ -41,10 +45,18 @@ export function LessonFormVideo({
 }) {
 	const [isUploading, setIsUploading] = useState(false);
 	const [uploadProgress, setUploadProgress] = useState(0);
-	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+	const [previewUrl, setPreviewUrl] = useState<string | null>(
+		field.value ?? null,
+	);
+
+	const { courseId } = useEditCourseId();
 
 	const onDrop = async (acceptedFiles: File[]) => {
 		if (!acceptedFiles.length) return;
+		if (!courseId) {
+			toast.error('找不到課程資料，請重新整理後再試');
+			return;
+		}
 
 		const file = acceptedFiles[0];
 
@@ -57,28 +69,58 @@ export function LessonFormVideo({
 		setIsUploading(true);
 		setUploadProgress(0);
 
-		// TODO: replace simulated progress with real upload logic.
-		for (let progress = 0; progress <= 100; progress += 10) {
-			setUploadProgress(progress);
-			await new Promise((resolve) => setTimeout(resolve, 80));
-		}
+		const result = await uploadLessonVideo({
+			file,
+			courseId,
+			lessonId,
+			onProgress: (percentage) => {
+				setUploadProgress(percentage);
+			},
+			onSuccess: (path) => {
+				field.onChange(path);
+				setIsUploading(false);
+				toast.success('上傳成功');
+			},
+			onError: () => {
+				setPreviewUrl(null);
+				setIsUploading(false);
+			},
+		});
 
-		// TODO: after connecting upload API, persist the returned storage path.
-		field.onChange(`pending-upload:${lessonId}:${file.name}`);
-		setIsUploading(false);
+		if (!result.ok) {
+			setPreviewUrl(null);
+			setIsUploading(false);
+			toast.error(result.message);
+		}
 	};
 
 	const handleRemoveVideo = async () => {
 		setIsUploading(true);
 
-		// TODO: remove the uploaded video from storage after lesson video API is ready.
-		await new Promise((resolve) => setTimeout(resolve, 200));
+		toast.promise(
+			async () => {
+				const result = await removeLessonVideo(lessonId);
 
-		setPreviewUrl(null);
-		setUploadProgress(0);
-		field.onChange('');
-		onRemoveVideo?.();
-		setIsUploading(false);
+				if (!result.ok) {
+					throw new Error(result.message);
+				}
+			},
+			{
+				loading: '移除影片中...',
+				success: () => {
+					setPreviewUrl(null);
+					setUploadProgress(0);
+					field.onChange('');
+					onRemoveVideo?.();
+					setIsUploading(false);
+					return '移除成功';
+				},
+				error: (err) => {
+					setIsUploading(false);
+					return err.message || '移除失敗，請稍後再試';
+				},
+			},
+		);
 	};
 
 	return (
@@ -118,7 +160,11 @@ export function LessonFormVideo({
 							{previewUrl ? (
 								<div className="relative aspect-video w-full">
 									<video
-										src={previewUrl}
+										src={
+											previewUrl.startsWith('data')
+												? previewUrl
+												: `/api/lesson-video/${previewUrl}`
+										}
 										className="h-full w-full rounded-lg object-cover"
 										controls
 									/>
@@ -170,7 +216,7 @@ export function LessonFormVideo({
 			</Dropzone>
 
 			<FieldDescription>
-				這一章先完成前端互動，真正的 storage 與影片播放會在下一章補上
+				只支援 MP4、WebM 格式，建議 16:9 比例，檔案大小限制 50MB
 			</FieldDescription>
 			<FieldError errors={[error]} />
 		</Field>
