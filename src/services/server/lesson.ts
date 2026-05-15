@@ -17,7 +17,6 @@ import {
 	type LessonTitles,
 } from '@/types';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { revalidateTag } from 'next/cache';
 
 export async function getLessonTitlesByCourseId(
 	courseId: string,
@@ -157,9 +156,6 @@ export async function insertLesson(
 		};
 	}
 
-	revalidateTag('lesson');
-	revalidateTag('course');
-
 	return {
 		ok: true,
 		data: data,
@@ -185,9 +181,6 @@ export async function updateLessonsOrder(
 			message: '更新單元順序失敗',
 		};
 	}
-
-	revalidateTag('lesson');
-	revalidateTag('course');
 
 	return {
 		ok: true,
@@ -255,9 +248,6 @@ export async function updateLesson(
 		};
 	}
 
-	revalidateTag('lesson');
-	revalidateTag('course');
-
 	return {
 		ok: true,
 		data: {
@@ -279,9 +269,6 @@ export async function deleteLesson(lessonId: string): Promise<Result<null>> {
 			message: error.message || '刪除課程單元失敗',
 		};
 	}
-
-	revalidateTag('lesson');
-	revalidateTag('course');
 
 	return {
 		ok: true,
