@@ -21,7 +21,6 @@ import {
 import type { UserProfile } from '@/types';
 import { RoleSectionPlanComparison } from './role-section-plan-comparison';
 import { AppError } from '@/types/result';
-import { upgradeCurrentUserToCreator } from '@/services/server/user';
 
 export function RoleSection({ user }: { user: UserProfile }) {
 	const router = useRouter();
@@ -34,17 +33,41 @@ export function RoleSection({ user }: { user: UserProfile }) {
 	const handleLifetimeUpgrade = async () => {
 		setIsLoading(true);
 
-		const res = await upgradeCurrentUserToCreator();
+		const response = await fetch('/api/checkout-sessions', {
+			method: 'POST',
+			body: JSON.stringify({
+				cancelUrl: '/account',
+				metadata: {
+					purchase_type: 'lifetime_creator',
+				},
+			}),
+		});
+
+		const res = await response.json();
 
 		if (!res.ok) {
-			toast.error(res.message);
+			switch (res.code) {
+				case AppError.UNAUTHENTICATED:
+					toast.error('請先登入帳號');
+					router.push('/auth/login');
+					break;
+				default:
+					console.error('handleLifetimeUpgrade ~ res:', res);
+					toast.error('升級失敗，請稍後再試');
+					break;
+			}
+
+			setIsLoading(false);
 			return;
 		}
 
 		setIsDialogOpen(false);
 
-		toast.success('已升級為創作者');
-		router.refresh();
+		const { url } = res.data;
+		if (url) {
+			toast.success('前往付款頁');
+			router.push(url as Route);
+		}
 	};
 
 	return (

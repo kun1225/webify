@@ -1,10 +1,7 @@
 'use server';
 
 import camelcaseKeys from 'camelcase-keys';
-import {
-	createSupabaseAdminClient,
-	createSupabaseServerClient,
-} from '@/lib/supabase/server';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { profileSchema, type ProfileFormData } from '../shared/validations';
 import snakecaseKeys from 'snakecase-keys';
 import { AppError, type Result, type UserProfile } from '@/types';
@@ -78,39 +75,5 @@ export async function updateUserProfile(
 	return {
 		ok: true,
 		data: camelcaseKeys(updatedProfile),
-	};
-}
-
-export async function upgradeCurrentUserToCreator(): Promise<Result<null>> {
-	const supabase = await createSupabaseServerClient();
-	const supabaseAdmin = await createSupabaseAdminClient();
-
-	const { data: auth, error: authError } = await supabase.auth.getUser();
-	const userId = auth.user?.id;
-
-	if (!userId) {
-		return {
-			ok: false,
-			code: AppError.UNAUTHENTICATED,
-			message: authError?.message || '請先登入帳號',
-		};
-	}
-
-	const { error } = await supabaseAdmin
-		.from('users')
-		.update({ role: 'creator' })
-		.eq('id', userId);
-
-	if (error) {
-		return {
-			ok: false,
-			code: AppError.INTERNAL,
-			message: error.message || '升級失敗，請稍後再試',
-		};
-	}
-
-	return {
-		ok: true,
-		data: null,
 	};
 }
