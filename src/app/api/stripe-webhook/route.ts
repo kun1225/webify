@@ -5,6 +5,7 @@ import { createSupabaseAdminClient } from '@/lib/supabase/server';
 import { getStripe } from '@/lib/stripe';
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const CREATOR_UPGRADE_PRICE_CENTS = 699000;
 
 export async function POST(req: NextRequest) {
 	if (!endpointSecret) {
@@ -79,6 +80,31 @@ export async function POST(req: NextRequest) {
 							},
 							{ onConflict: 'user_id,course_id' },
 						);
+
+					if (error) {
+						throw error;
+					}
+				}
+
+				if (purchaseType === 'lifetime_creator') {
+					if (!userId) {
+						console.warn('Missing user_id in session metadata');
+						break;
+					}
+
+					if (session.amount_total !== CREATOR_UPGRADE_PRICE_CENTS) {
+						console.error('Amount mismatch for creator upgrade:', {
+							expected: CREATOR_UPGRADE_PRICE_CENTS,
+							actual: session.amount_total,
+							userId,
+						});
+						break;
+					}
+
+					const { error } = await supabaseAdmin
+						.from('users')
+						.update({ role: 'creator' })
+						.eq('id', userId);
 
 					if (error) {
 						throw error;
