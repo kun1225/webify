@@ -22,6 +22,18 @@ export async function getLessonTitlesByCourseId(
 	courseId: string,
 ): Promise<Result<LessonTitles>> {
 	const supabase = await createSupabaseServerClient();
+	const {
+		data: { user },
+		error: userError,
+	} = await supabase.auth.getUser();
+
+	if (userError || !user) {
+		return {
+			ok: false,
+			code: AppError.UNAUTHENTICATED,
+			message: '請先登入',
+		};
+	}
 
 	const { data, error } = await supabase
 		.from('lessons')
@@ -86,6 +98,18 @@ export async function getLessonAndContentById(
 	lessonId: string,
 ): Promise<Result<LessonAndContentForEdit>> {
 	const supabase = await createSupabaseServerClient();
+	const {
+		data: { user },
+		error: userError,
+	} = await supabase.auth.getUser();
+
+	if (userError || !user) {
+		return {
+			ok: false,
+			code: AppError.UNAUTHENTICATED,
+			message: '請先登入',
+		};
+	}
 
 	const { data, error } = await supabase
 		.from('lessons')
