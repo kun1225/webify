@@ -33,9 +33,6 @@ export function CourseDetailPage({ data }: { data: CourseForCourseDetail }) {
 		const response = await fetch('/api/checkout-sessions', {
 			method: 'POST',
 			body: JSON.stringify({
-				title,
-				price,
-				coverImageUrl,
 				cancelUrl: `/courses/${creator}/${slug}`,
 				metadata: {
 					course_id: data.id,
@@ -52,21 +49,19 @@ export function CourseDetailPage({ data }: { data: CourseForCourseDetail }) {
 					setTimeout(() => {
 						toast.error('請先登入帳號');
 					});
-					router.push(
-						`/auth/login?next=${encodeURIComponent(`/courses/${creator}/${slug}`)}`,
-					);
+					router.push('/auth/login');
 					return;
 				}
 				default:
 					console.error('handleBuy ~ res:', res);
 					toast.error('購買失敗，請稍後再試');
-					break;
+					return;
 			}
 		}
 
 		const { url } = res.data;
 		if (url) {
-			toast.success('購買成功');
+			toast.success('前往付款頁');
 			router.push(url as Route);
 		}
 	};
