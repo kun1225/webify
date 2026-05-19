@@ -12,7 +12,7 @@ export function CourseCta({
 }: {
 	data: CourseForCourseDetail;
 	className?: string;
-	handleBuy: () => void;
+	handleBuy: () => void | Promise<void>;
 }) {
 	const { isPurchased, price } = data || {};
 

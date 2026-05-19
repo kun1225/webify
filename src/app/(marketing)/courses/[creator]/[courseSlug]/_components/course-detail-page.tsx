@@ -15,20 +15,60 @@ import { CoursePurchaseBar } from './course-purchase-bar';
 import { CourseCta } from './course-cta';
 
 import { type JSONContent } from '@tiptap/core';
-import { type CourseForCourseDetail } from '@/types';
+import { AppError, type CourseForCourseDetail } from '@/types';
+import type { Route } from 'next';
 
 export function CourseDetailPage({ data }: { data: CourseForCourseDetail }) {
-	const { title, creator, coverImageUrl, description, lessons } = data || {};
+	const { title, slug, creator, coverImageUrl, description, lessons, price } =
+		data || {};
 
 	const router = useRouter();
 
-	const handleBuy = () => {
+	const handleBuy = async () => {
 		if (data.isPurchased) {
-			router.push('/my-courses');
+			router.push(`/my-courses/${data.id}`);
 			return;
 		}
 
-		toast.info('購買功能尚未開放');
+		const response = await fetch('/api/checkout-sessions', {
+			method: 'POST',
+			body: JSON.stringify({
+				title,
+				price,
+				coverImageUrl,
+				cancelUrl: `/courses/${creator}/${slug}`,
+				metadata: {
+					course_id: data.id,
+					purchase_type: 'course',
+				},
+			}),
+		});
+
+		const res = await response.json();
+
+		if (!res.ok) {
+			switch (res.code) {
+				case AppError.UNAUTHENTICATED: {
+					setTimeout(() => {
+						toast.error('請先登入帳號');
+					});
+					router.push(
+						`/auth/login?next=${encodeURIComponent(`/courses/${creator}/${slug}`)}`,
+					);
+					return;
+				}
+				default:
+					console.error('handleBuy ~ res:', res);
+					toast.error('購買失敗，請稍後再試');
+					break;
+			}
+		}
+
+		const { url } = res.data;
+		if (url) {
+			toast.success('購買成功');
+			router.push(url as Route);
+		}
 	};
 
 	return (

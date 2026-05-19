@@ -15,7 +15,7 @@ export function CoursePurchaseBar({
 	handleBuy,
 }: {
 	data: CourseForCourseDetail;
-	handleBuy: () => void;
+	handleBuy: () => void | Promise<void>;
 }) {
 	const barRef = useRef<HTMLElement>(null);
 	const prevScroll = useRef(0);

@@ -49,6 +49,13 @@ export type CourseForCourseDetail = Pick<
 	isPurchased: boolean;
 };
 
+export type CourseForPurchased = Pick<
+	Course,
+	'id' | 'title' | 'slug' | 'coverImageUrl' | 'duration' | 'isHidden'
+> & {
+	creator: string;
+};
+
 export type CourseForCourses = Pick<
 	Course,
 	'id' | 'title' | 'slug' | 'coverImageUrl' | 'price' | 'creatorId' | 'duration'

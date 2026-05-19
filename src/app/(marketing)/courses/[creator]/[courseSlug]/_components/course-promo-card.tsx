@@ -23,7 +23,7 @@ export function CoursePromoCard({
 }: {
 	data: CourseForCourseDetail;
 	className?: string;
-	handleBuy: () => void;
+	handleBuy: () => void | Promise<void>;
 }) {
 	const { title, coverImageUrl, price } = data || {};
 
