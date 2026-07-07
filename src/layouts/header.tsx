@@ -2,6 +2,8 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { HeaderCta } from '@/layouts/header-cta';
+
 const headerNavLinks = [
 	{
 		label: '首頁',
@@ -41,9 +43,7 @@ export function Header() {
 				</ul>
 			</nav>
 
-			<Button asChild>
-				<Link href="/auth/login">登入</Link>
-			</Button>
+			<HeaderCta />
 		</header>
 	);
 }

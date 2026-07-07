@@ -51,6 +51,8 @@ export async function signup(
 	data: SignUpFormData,
 ): Promise<Result<AuthResponse['data']>> {
 	const { email, password } = data;
+	const siteUrl =
+		process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
 	const supabase = await createSupabaseServerClient();
 	const adminClient = await createSupabaseAdminClient();
@@ -75,6 +77,7 @@ export async function signup(
 		email,
 		password,
 		options: {
+			emailRedirectTo: new URL('/api/auth/callback', siteUrl).toString(),
 			data: {
 				full_name: signupUserName,
 			},
